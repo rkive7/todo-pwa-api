@@ -7,6 +7,7 @@ import morgan from 'morgan';
 
 import authRoutes from './routes/auth.routes.js';
 import taskRoutes from './routes/task.routes.js';
+import e from 'cors';
 
 
 const app = express();
@@ -29,3 +30,5 @@ mongoose.connect(process.env.MONGO_URI, {dbName: 'BackPWA'})
         console.error('Error conectado a mongoDB', err);
         process.exit(1);
     });
+
+    export default app;
