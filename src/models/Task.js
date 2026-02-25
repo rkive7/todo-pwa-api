@@ -7,7 +7,7 @@ const taskSchema = new mongoose.Schema(
         description:{type: String, trim: true, default: ''},
         status:{
             type: String,
-            enum: ['Pendiente', 'En progreso', 'completada'],
+            enum: ['Pendiente', 'En Progreso', 'Completada'],
             default: 'Pendiente',
         },
         clienteId:{type: String},

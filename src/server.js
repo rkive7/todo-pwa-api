@@ -23,7 +23,7 @@ const {PORT = 4000, MONGO_URI} = process.env;
 mongoose.connect(process.env.MONGO_URI, {dbName: 'BackPWA'})
     .then(() => {
         console.log('Conectado a mongoDB', mongoose.connection.name);
-        app.listen(PORT, () => console.log(`Servidor ejecutandose por: ${PORT}`));
+        app.listen(PORT, '0.0.0.0', () => console.log(`Servidor ejecutandose por: ${PORT}`));
     })
     .catch(err =>{
         console.error('Error conectado a mongoDB', err);
