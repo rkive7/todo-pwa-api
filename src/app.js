@@ -4,6 +4,7 @@ import morgan from "morgan";
 import authRoutes from "./routes/auth.routes.js";
 import taskRoutes from "./routes/task.routes.js";
 import { connectToDB } from "./db/connect.js";
+import activityRoutes from "./routes/activity.routes.js";
 
 const app = express();
 
@@ -31,5 +32,6 @@ app.use(async (_req, _res, next) => {
 app.get("/", (_req, res) => res.json({ ok: true, name: "Nath todo api" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
+app.use("/api/activity", activityRoutes);
 
 export default app;

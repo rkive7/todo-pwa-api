@@ -1,4 +1,5 @@
 // controllers/task.controller.js
+import Activity from "../models/Log.js";
 import Task from "../models/Task.js";
 
 const allowed = ["Pendiente", "En Progreso", "Completada"]; // <-- usa este nombre en todos lados
@@ -19,6 +20,18 @@ export async function create(req, res) {
     status: allowed.includes(status) ? status : "Pendiente", // <-- allowed
     clienteId,
   });
+
+  // LOG: Tarea Creada
+
+  console.log("¡Ey! Intentando guardar el historial de:", task.title);
+
+  await Activity.create({
+    user: req.userId,
+    action: "CREADA",
+    taskTitle: task.title,
+    details: "El usuario creó una nueva tarea"
+  });
+
   res.status(201).json({ task });
 }
 
@@ -34,7 +47,20 @@ export async function update(req, res) {
     { title, description, status },
     { new: true }
   );
+  
   if (!task) return res.status(404).json({ message: "Tarea no encontrada" });
+
+  // LOG: Tarea Editada o Completada
+  // Validamos si el nuevo estado es "Completada" para registrar ese evento en específico
+  const actionType = task.status === "Completada" ? "COMPLETADA" : "EDITADA";
+  
+  await Activity.create({
+    user: req.userId,
+    action: actionType,
+    taskTitle: task.title,
+    details: `El usuario actualizó la tarea. Estado actual: ${task.status}`
+  });
+
   res.json({ task });
 }
 
@@ -45,7 +71,17 @@ export async function remove(req, res) {
     { deleted: true },
     { new: true }
   );
+  
   if (!task) return res.status(404).json({ message: "Tarea no encontrada" });
+
+  // LOG: Tarea Eliminada
+  await Activity.create({
+    user: req.userId,
+    action: "ELIMINADA",
+    taskTitle: task.title,
+    details: "El usuario movió la tarea a la papelera (soft delete)"
+  });
+
   res.json({ ok: true });
 }
 
@@ -56,6 +92,7 @@ export async function bulksync(req, res) {
     if (!Array.isArray(tasks)) return res.status(400).json({ message: "tasks debe ser array" });
 
     const mapping = [];
+    let syncCount = 0; // Para saber cuántas se sincronizaron
 
     for (const t of tasks) {
       if (!t || !t.clienteId || !t.title) continue;
@@ -78,6 +115,18 @@ export async function bulksync(req, res) {
       }
 
       mapping.push({ clienteId: t.clienteId, serverId: String(doc._id) });
+      syncCount++;
+    }
+
+    // LOG: Sincronización
+    // Lo ponemos fuera del ciclo para no saturar la base de datos con 50 logs de golpe si se sincronizan 50 tareas
+    if (syncCount > 0) {
+      await Activity.create({
+        user: req.userId,
+        action: "SINCRONIZADA",
+        taskTitle: "Sincronización Offline",
+        details: `El usuario sincronizó ${syncCount} tareas desde su dispositivo local`
+      });
     }
 
     return res.json({ mapping });

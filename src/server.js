@@ -7,6 +7,7 @@ import morgan from 'morgan';
 
 import authRoutes from './routes/auth.routes.js';
 import taskRoutes from './routes/task.routes.js';
+import activityRoutes from "./routes/activity.routes.js";
 import e from 'cors';
 
 
@@ -19,6 +20,7 @@ app.use(morgan('dev'));
 app.get('/', (req, res) => res.json({ok: true, name: 'Brandon Todo API'}));
 app.use('/api/auth', authRoutes);
 app.use('/api/tasks', taskRoutes);
+app.use("/api/activity", activityRoutes);
 
 const {PORT = 4000, MONGO_URI} = process.env;
 mongoose.connect(process.env.MONGO_URI, {dbName: 'BackPWA'})
