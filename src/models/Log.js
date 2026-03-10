@@ -3,23 +3,23 @@ import mongoose from "mongoose";
 const activitySchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Asumiendo que tu modelo de usuarios se llama "User"
+    ref: "User",
     required: true,
   },
   action: {
     type: String,
     required: true,
-    enum: ["CREADA", "EDITADA", "COMPLETADA", "ELIMINADA", "SINCRONIZADA"], // Los eventos que pidió tu profe
+    enum: ["CREADA", "EDITADA", "COMPLETADA", "ELIMINADA", "SINCRONIZADA"],
   },
   taskTitle: {
     type: String,
-    required: true, // Guardamos el nombre de la tarea para saber a qué le movieron
+    required: true,
   },
   details: {
-    type: String, // Opcional: para guardar cosas como "Cambió de Pendiente a Completada"
+    type: String,
   }
 }, {
-  timestamps: true // Esto automáticamente crea los campos createdAt y updatedAt
+  timestamps: true
 });
 
 export default mongoose.model("Activity", activitySchema);

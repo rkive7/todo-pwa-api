@@ -79,7 +79,7 @@ export async function remove(req, res) {
     user: req.userId,
     action: "ELIMINADA",
     taskTitle: task.title,
-    details: "El usuario movió la tarea a la papelera (soft delete)"
+    details: "El usuario movió la tarea a la papelera"
   });
 
   res.json({ ok: true });
